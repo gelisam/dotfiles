@@ -1,0 +1,69 @@
+#!/bin/bash
+
+TRASH="$HOME/.Trash"
+
+function hoursago_dir {
+  local DATETIME="$1 hours ago"
+  local DATEHOUR="$(date --date="$DATETIME" +'%Y-%m-%d_%H')"
+  echo "$TRASH/$DATEHOUR"
+}
+
+function verbose_rm {
+  echo -n "rm -rf "
+  if [ -e "$1" ]; then
+    chmod -R u+w "$1"
+  fi
+  echo "$1"
+  rm -rf "$1"
+}
+
+if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+  for x in `seq 4 7`; do
+    verbose_rm "$(hoursago_dir "$x")"
+  done
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    for x in `seq 8 17`; do
+      verbose_rm "$(hoursago_dir "$x")"
+    done
+  fi
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    for x in `seq 18 37`; do
+      verbose_rm "$(hoursago_dir "$x")"
+    done
+  fi
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    for x in `seq 38 67`; do
+      verbose_rm "$(hoursago_dir "$x")"
+    done
+  fi
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    for x in `seq 68 120`; do
+      verbose_rm "$(hoursago_dir "$x")"
+    done
+  fi
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    for x in `seq 121 240`; do
+      verbose_rm "$(hoursago_dir "$x")"
+    done
+  fi
+  
+  if [ "$(ls "$TRASH" | wc -l)" -gt 4 ]; then
+    echo "you might want to empty the $TRASH yourself;"
+    echo "there are files I don't know about in there."
+  fi
+fi
+
+DEST="$(hoursago_dir 0)"
+
+mkdir -p "$DEST"
+while [ $# -gt 0 ]; do
+  FILE="$1"; shift
+  COUNT="$(ls "$DEST" | wc -l)"
+  mkdir "$DEST/$COUNT"
+  mv "$FILE" "$DEST/$COUNT/$(basename "$1")"
+done
