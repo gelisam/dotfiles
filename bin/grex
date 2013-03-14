@@ -1,0 +1,37 @@
+#!/bin/bash
+declare -a DIR
+declare -a FIND_OPTIONS
+while [ -d "$1" ]; do
+  DIR[${#DIR[@]}]="$1"; shift
+done
+
+if [ "${#DIR[@]}" -eq 0 ]; then
+  DIR="."
+fi
+
+if [ "$(basename "$0")" = "grepp" ]; then
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="-name"
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="*.cpp"
+fi
+
+if [ "$(echo "$1" | cut -c1)" = "." ]; then
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="-name"
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="*$1"; shift
+fi
+
+if [ "$1" = "-name" ]; then
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+fi
+
+if [ "$1" = "-iname" ]; then
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+fi
+
+if [ "$1" = "-newer" ]; then
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+  FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
+fi
+
+find "${DIR[@]}" -name '\.git' -prune -o -name '\.svn' -prune -o -type f "${FIND_OPTIONS[@]}" | tr '\n' '\0' | xargs -0 grep "$@"
