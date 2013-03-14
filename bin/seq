@@ -1,0 +1,83 @@
+#!/usr/bin/ruby
+# > seq 14
+# 1
+# 2
+# ...
+# 14
+# > seq 08
+# 01
+# 02
+# ...
+# 08
+# > seq 010 100
+# 010
+# 011
+# ...
+# 100
+# > seq 'image{01,08}.jpg'
+# image01.jpg
+# image02.jpg
+# ...
+# image08.jpg
+# > seq image01.jpg image08.jpg
+# image01.jpg
+# image02.jpg
+# ...
+# image08.jpg
+# > seq image08.jpg
+# image01.jpg
+# image02.jpg
+# ...
+# image08.jpg
+# > seq image11.jpg
+# image1.jpg
+# image2.jpg
+# ...
+# image11.jpg
+
+def seq pat
+  /^([^{}]*)\{([^{}]*),([^{}]*)\}([^{}]*)$/ === pat
+  head, from, to, tail = $1, $2, $3, $4
+  pad = (from[0] == ?0) ? from.length : 0
+  (from.to_i..to.to_i).each {|i|
+    puts "%s%0#{pad}d%s" % [head, i, tail]
+  }
+end
+
+if ARGV[1]
+  common_head = ""
+  mid0 = ""
+  mid1 = ""
+  ARGV[0].length.times {|i|
+    if ARGV[0][i] == ARGV[1][i] && (ARGV[0][i] < ?0 || ARGV[0][i] > ?9)
+      common_head << ARGV[0][i]
+    else
+      mid0 = ARGV[0][i..-1]
+      mid1 = ARGV[1][i..-1]
+      break
+    end
+  }
+  
+  common_tail = ""
+  mid0.length.times {|j| i=j+1
+    if mid0[-i] == mid1[-i] && (mid0[-i] < ?0 || mid0[-i] > ?9)
+      common_tail << mid0[-i]
+    else
+      mid0 = mid0[0..-i]
+      mid1 = mid1[0..-i]
+      break
+    end
+  }
+  common_tail.reverse!
+  
+  seq "#{common_head}{#{mid0},#{mid1}}#{common_tail}"
+elsif /^([^{}]*)\{([^{}]*),([^{}]*)\}([^{}]*)$/ === ARGV[0]
+  seq ARGV[0]
+elsif /^([^0-9]*)([0-9]*)([^0-9]*)$/ === ARGV[0]
+  common_head, mid1, common_tail = $1, $2, $3
+  pad = (mid1[0] == ?0) ? mid1.length : 0
+  mid0 = "%0#{pad}d" % 1
+  seq "#{common_head}{#{mid0},#{mid1}}#{common_tail}"
+else
+  raise "format error"
+end
