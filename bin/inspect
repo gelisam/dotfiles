@@ -1,0 +1,4 @@
+#!/usr/bin/ruby
+ARGV.each {|arg|
+  puts arg.inspect
+}
