@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BASENAME="$(basename "$(pwd)")"
+if [ "$1" ]; then
+  BASENAME="$1"
+fi
+
+TARGET="$HOME/quickfolders/$BASENAME"
+
+echo "#!/bin/bash" > "$TARGET"
+echo "echo \"$(pwd)\"" >> "$TARGET"
+chmod a+x "$TARGET"
