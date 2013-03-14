@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<root>
+  <item>
+    <name>Backslash as Shift</name>
+    <identifier>private.backspace_as_shift</identifier>
+    <autogen>--KeyToKey-- KeyCode::BACKSLASH, ModifierFlag::OPTION_R, KeyCode::BACKSLASH</autogen>
+    <autogen>--KeyToKey-- KeyCode::BACKSLASH, KeyCode::SHIFT_R</autogen>
+  </item>
+</root>

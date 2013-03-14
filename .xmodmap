@@ -1,0 +1,41 @@
+! inverse numbers and symbols
+!keycode 0x0A = exclam 1
+!keycode 0x0B = at 2
+!keycode 0x0C = numbersign 3
+!keycode 0x0D = dollar 4
+!keycode 0x0E = percent 5
+!keycode 0x0F = asciicircum 6
+!keycode 0x10 = ampersand 7
+!keycode 0x11 = asterisk 8
+!keycode 0x12 = parenleft 9
+!keycode 0x13 = parenright 0
+
+! activate keypad
+keycode 0x59 = slash
+keycode 0x53 = asterisk
+keycode 0x4b = equal
+keycode 0x61 = 7
+keycode 0x63 = 8
+keycode 0x64 = 9
+keycode 0x5e = 4
+keycode 0x5f = 5
+keycode 0x60 = 6
+keycode 0x5b = 1
+keycode 0x5c = 2
+keycode 0x5d = 3
+keycode 0x5a = 0
+keycode 0x49 = period
+
+! place dead keys below the brackets
+keycode 0x34 = slash question dead_acute acute
+keycode 0x2f = apostrophe quotedbl dead_grave dead_diaeresis
+keycode 0x29 = bracketleft braceleft dead_circumflex asciicircum
+keycode 0x26 = bracketright braceright dead_cedilla dead_diaeresis
+
+! fix other strangely incorrect stuff
+keycode 0x3a = grave asciitilde
+keycode 0x33 = comma less
+keycode 0x37 = period greater
+keycode 0x1e = 6 asciicircum
+keycode 0x45 = Mode_switch
+clear Lock
