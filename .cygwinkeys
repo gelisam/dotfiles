@@ -1,0 +1,8 @@
+:cmap [A <Up>
+:cmap [B <Down>
+:cmap [C <Right>
+:cmap [D <Left>
+:cmap [1~ <Home>
+:cmap [2~ <Insert>
+:cmap [3~ <Del>
+:cmap [4~ <End>
