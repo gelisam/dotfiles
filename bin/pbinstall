@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+X="$(pbpaste)"
+wget "$X"
+X="$(basename "$X")"
+tar xzvf "$X"
+un "$X"
+X="$(basename "$X" .tar.gz)"
+cd "$X"
+./configure --prefix="$HOME/custom"
