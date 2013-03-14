@@ -15,6 +15,17 @@ export PYTHONPATH="$PYTHONPATH:$HOME/working/django"
 #export HAXE_LIBRARY_PATH="`brew --prefix`/share/haxe/std"
 export NODE_PATH="/usr/local/lib/node"
 
+export LANG="en_US.utf8"
+export LC_CTYPE="en_US.utf8"
+export LC_NUMERIC="en_US.utf8"
+export LC_TIME="en_US.utf8"
+export LC_COLLATE="en_US.utf8"
+export LC_MONETARY="en_US.utf8"
+export LC_MESSAGES="en_US.utf8"
+
+shopt -s checkwinsize
+umask 022
+
 export HISTIGNORE="&:exit:[ \t]*"
 alias ls='ls -G'
 alias mv='mv -i'
