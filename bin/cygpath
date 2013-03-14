@@ -1,0 +1,6 @@
+#!/bin/bash
+
+WINDOWS_PATH="$1"
+LINUX_PATH="$(echo "$WINDOWS_PATH" | tr '\\' '/' | sed 's!^\([cC]\):!/cygdrive/\1!g')"
+
+echo "$LINUX_PATH"
