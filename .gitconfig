@@ -1,0 +1,15 @@
+[user]
+	name = Samuel Gélineau
+	email = gelisam+github@gmail.com
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	ui = auto
+[i18n]
+	commitencoding = utf-8
+	logoutputencoding = utf-8
+[push]
+	default = simple
+[core]
+	autocrlf = input
