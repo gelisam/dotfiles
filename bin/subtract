@@ -1,0 +1,32 @@
+#!/usr/bin/ruby
+# Only works if f2 is a strict subset of f1
+#f2 = File.open(ARGV[1])
+#File.open(ARGV[0]) {|f1|
+#  next_kill = nil
+#  begin
+#    next_kill = f2.readline
+#  rescue EOFError
+#    next_kill = nil
+#  end
+#  f1.each_line {|line|
+#    if line == next_kill
+#      begin
+#        next_kill = f2.readline
+#      rescue EOFError
+#        next_kill = nil
+#      end
+#    else
+#      print line
+#    end
+#  }
+#}
+
+
+# always works, but takes more memory
+require 'set'
+f2 = Set.new(File.open(ARGV[1]) {|f| f.readlines})
+File.open(ARGV[0]) {|f1|
+  f1.each_line {|line|
+		print line unless f2.include?(line)
+  }
+}
