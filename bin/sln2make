@@ -1,0 +1,153 @@
+#!/usr/bin/ruby
+require 'pathname'
+require 'rexml/document'
+include REXML
+
+def write_makefile(nonmakefile_filename, contents)
+  makefile_filename = nonmakefile_filename.dirname + "Makefile"
+  puts "writing #{makefile_filename.to_s.inspect}..."
+  File.open(makefile_filename, "w") {|f|
+    f.puts(contents)
+    #puts contents
+  }
+  makefile_filename
+end
+
+sln_filename = Pathname.new(ARGV[0])
+sln_subprojects = {}
+sln_dependencies = {}
+File.open(sln_filename) {|sln|
+  sln.each_line {|sln_line|
+    sln_line.chomp!
+    case sln_line
+    when /^Project\([^\)]*\) = "([^"]*)", "([^"]*)"/
+      project_name, rel_project_filename = $1.to_s, $2.to_s.gsub("\\", "/")
+      project_filename = sln_filename.dirname + rel_project_filename
+      puts "importing project #{project_name.inspect}"
+      begin
+        if project_filename.extname != ".csproj" then
+          raise "unrecognized extension #{project_filename.extname}"
+        end
+        
+        sln_dependencies[project_name] = []
+        proj_makefile_contents = []
+        File.open(project_filename) {|proj|
+          proj_xml = Document.new(proj)
+          
+          output_dirname = XPath.first(proj_xml, "/Project/PropertyGroup/OutputPath").text.gsub("\\", "/")
+          output_basename = XPath.first(proj_xml, "/Project/PropertyGroup/AssemblyName").text
+          output_extname = nil
+          
+          output_type = XPath.first(proj_xml, "/Project/PropertyGroup/OutputType").text.downcase
+          case output_type
+          when "library"
+            output_extname = "dll"
+          when "exe"
+            output_extname = "exe"
+          else
+            raise "unrecognized output type #{output_type.inspect}"
+          end
+          
+          output_name = "#{output_basename}.#{output_extname}"
+          output_filename = "#{output_dirname}/#{output_name}"
+          
+          proj_makefile_contents << "all: #{output_filename}"
+          proj_makefile_contents << ".PHONY: all clean clobber"
+          proj_makefile_contents << ""
+          proj_makefile_contents << ""
+          
+          external_references = XPath.match(proj_xml, "/Project/ItemGroup/Reference").map {|e|
+            e.attributes["Include"].gsub(/,.*/, "")
+          }
+          internal_references = XPath.match(proj_xml, "/Project/ItemGroup/ProjectReference").map {|e|
+            dependency_project_name = XPath.first(e, "Name").text
+            sln_dependencies[project_name] << dependency_project_name
+            
+            dependency_filename = project_filename.dirname + e.attributes["Include"].gsub("\\", "/")
+            File.open(dependency_filename) {|dependency|
+              dependency_xml = Document.new(dependency)
+              
+              dependency_dirname = XPath.first(dependency_xml, "/Project/PropertyGroup/OutputPath").text.gsub("\\", "/")
+              dependency_basename = XPath.first(dependency_xml, "/Project/PropertyGroup/AssemblyName").text
+              dependency_extname = "dll"
+              
+              dependency_name = "#{dependency_basename}.#{dependency_extname}"
+              dependency_filename = "#{dependency_dirname}/#{dependency_name}"
+              dependency_filename
+            }
+          }
+          references = external_references + internal_references
+          
+          proj_namespace = XPath.first(proj_xml, "/Project/PropertyGroup/RootNamespace").text
+          sources = XPath.match(proj_xml, "/Project/ItemGroup/Compile").map {|e|
+            e.attributes["Include"].gsub("\\", "/")
+          }
+          resources = XPath.match(proj_xml, "/Project/ItemGroup/EmbeddedResource").map {|e|
+            e.attributes["Include"].gsub("\\", "/").gsub(/\.resx$/, "")
+          }
+          
+          proj_makefile_contents << "%.linux.resx: %.resx"
+          proj_makefile_contents << "\tcat $< | tr '\\\\' '/' > $@"
+          proj_makefile_contents << ""
+          resources.each {|r|
+            res_basename = Pathname.new(r)
+            proj_makefile_contents << "#{r}.resources: #{r}.linux.resx"
+            proj_makefile_contents << "\tcd #{res_basename.dirname} && resgen #{res_basename.basename}.linux.resx #{res_basename.basename}.resources"
+            proj_makefile_contents << ""
+          }
+          
+          gmcs_options = []
+          gmcs_options << "-t:#{output_type}"
+          gmcs_options << "$$MONO_CFLAGS"
+          if (e=XPath.first(proj_xml, "/Project/PropertyGroup/AllowUnsafeBlocks")) && e.text == "true" then
+            gmcs_options << "-unsafe"
+          end
+          gmcs_options << "-out:\"$@\""
+          gmcs_options += resources.map {|r| "-resource:#{r}.resources,#{proj_namespace}.#{r.gsub("/", ".")}.resources"}
+          gmcs_options += references.map {|r| "-reference:#{r}"}
+          gmcs_options += sources
+          
+          proj_makefile_contents << "#{output_filename}:#{sources.map{|s| " "+s}.join("")}#{resources.map{|s| %Q{ #{s}.resources}}.join("")}"
+          proj_makefile_contents << "\tmkdir -p #{output_dirname}"
+          proj_makefile_contents << "\tgmcs #{gmcs_options.join(" ")}"
+          proj_makefile_contents << ""
+          proj_makefile_contents << ""
+          proj_makefile_contents << "clean:"
+          resources.each {|r|
+            proj_makefile_contents << "\trm -rf #{r}.linux.resx #{r}.resources"
+          }
+          proj_makefile_contents << ""
+          proj_makefile_contents << "clobber: clean"
+          proj_makefile_contents << "\trm -rf #{output_filename}"
+        }
+        
+        
+        sln_subprojects[project_name] = write_makefile(project_filename, proj_makefile_contents)
+      rescue
+        puts "cannot import project #{project_name.inspect}: #{$!.to_s}"
+      end
+      puts
+    end
+  }
+}
+
+sln_makefile_contents = []
+sln_makefile_contents << "all:#{sln_subprojects.keys.map{|s| " "+s}.join("")}"
+sln_makefile_contents << ".PHONY: add clean clobber #{sln_subprojects.keys.join(" ")}"
+sln_makefile_contents << ""
+sln_makefile_contents << ""
+sln_subprojects.keys.each {|k|
+  sln_makefile_contents << "#{k}:#{sln_dependencies[k].map{|s| " "+s}.join("")}"
+  sln_makefile_contents << "\t$(MAKE) -C #{sln_subprojects[k].dirname}"
+  sln_makefile_contents << ""
+}
+sln_makefile_contents << ""
+sln_makefile_contents << "clean:"
+sln_subprojects.keys.each {|k|
+  sln_makefile_contents << "\t$(MAKE) -C #{sln_subprojects[k].dirname} clean"
+}
+sln_makefile_contents << "clobber:"
+sln_subprojects.keys.each {|k|
+  sln_makefile_contents << "\t$(MAKE) -C #{sln_subprojects[k].dirname} clobber"
+}
+write_makefile(sln_filename, sln_makefile_contents)
