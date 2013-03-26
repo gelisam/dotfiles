@@ -1,0 +1,16 @@
+#!/bin/bash
+N=1
+echo "set height 0"
+while [ "$1" ]; do
+  BREAKPOINT="$1"; shift
+  echo "break $BREAKPOINT"
+  echo "disable $N"
+  echo "commands $N"
+  echo "disable $N"
+  if [ "$1" ]; then
+    N=$(($N + 1))
+    echo "enable $N"
+    echo "cont"
+  fi
+  echo "end"
+done
