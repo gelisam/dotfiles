@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+STRIP_COUNT="$(echo "$1" | cut -d'p' -f2)"
+
+RESULT="$(cat)"
+for x in `seq "$STRIP_COUNT"`; do
+  RESULT="$(echo "$RESULT" | sed 's/^\([+-][+-][+-]\) [^\/]*\//\1 /g')"
+done
+echo "$RESULT"
