@@ -1,0 +1,18 @@
+#!/bin/bash
+if [ "$1" ]; then
+  ARG="$1"; shift
+  LINE="$(echo "$ARG" | grep ':' | cut -d':' -f2)"
+  FILENAME="$(echo "$ARG" | cut -d':' -f1)"
+  if [ "$(echo "$FILENAME" | cut -c1)" != '/' ]; then
+    while [ ! -f "$FILENAME" ] && [ "$(pwd)" != "/" ]; do
+      cd ..
+    done
+  fi
+  if [ "$LINE" ]; then
+    vim "$FILENAME" "+$LINE" "$@"
+  else
+    vim "$FILENAME" "$@"
+  fi
+else
+  vim
+fi
