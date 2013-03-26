@@ -1,0 +1,82 @@
+#!/usr/bin/ruby
+
+code = $stdin.read
+basename = ARGV[0]
+
+
+guard = "#{basename.upcase}_H"
+header_filename = "#{basename}.h"
+impl_filename = "#{basename}.cpp"
+
+
+File.open(impl_filename, "w") {|f|
+	f.puts %Q{#include "#{header_filename}"}
+	f.puts ""
+	f.puts ""
+	f.puts code
+}
+
+
+# first, add some harmless newlines, in order to simplify our regular expressions.
+$code = "\n#{code}\n"
+
+# prefixes on unindented lines will also simplify our task.
+$code.gsub!(/\n([^ \n\t])/, "\nUNINDENTED #{'\1'}")
+
+
+def forward(char_regexp, i)
+	while i < $code.length and char_regexp === $code[i..i]
+		i += 1
+	end
+	i
+end
+
+def backward(char_regexp, i)
+	while i > 0 and char_regexp === $code[i..i]
+		i -= 1
+	end
+	i
+end
+
+
+File.open(header_filename, "w") {|f|
+	f.puts "#ifndef #{guard}"
+	f.puts "#define #{guard}"
+	f.puts ""
+	f.puts ""
+	
+	# now the tricky part:
+	# we need to convert all function definitions into declarations.
+	offset = 0
+	while offset < $code.length do
+		# assume that all inner "{"s are properly indented.
+		# so if we find an unindented line ending with "{",
+		# it marks the beginning of a function.
+		
+		i = $code.index(/\nUNINDENTED [^\n]*\{\n/, offset)
+		break unless i
+		
+		# make sure we don't end up with the same index on the next iteration.
+		offset = i + 1
+		
+		# start from the "{"
+		decl_end = i = forward(/[^\n]/, i+1) - 1
+		
+		# find the end of the function name
+		func_end = i = backward(/[^\(]/, i)
+		
+		# find the beginning of the function return value
+		decl_begin = i = backward(/[^\n]/, i)
+		
+		decl = $code[decl_begin...decl_end]
+		decl.gsub!(/\nUNINDENTED /, "\n")
+		decl.gsub!(/[\n \t]*$/, "")
+		f.puts "#{decl};"
+	end
+	
+	f.puts ""
+	f.puts "#endif"
+}
+
+
+puts %Q{#include "#{header_filename}"}
