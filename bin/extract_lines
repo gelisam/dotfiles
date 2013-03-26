@@ -1,0 +1,17 @@
+#!/usr/bin/ruby
+lines = $stdin.readlines
+pattern = ARGV[0]
+pattern.split(",").each {|p|
+  case p
+  when /^([0-9]*)$/
+    line = $1.to_i
+    puts lines[line-1]
+  when /^([0-9]*)-([0-9]*)$/
+    from, to = $1.to_i, $2.to_i
+    (from..to).each {|line|
+      puts lines[line-1]
+    }
+  else
+    $stderr.puts "syntax error: #{p.inspect}"
+  end
+}
