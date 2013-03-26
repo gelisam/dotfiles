@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ -z "$1" ] || [ ! -f "$1" ]; then
+   echo "usage: $0 path/to/executable"
+   echo "  prints the rpaths embedded in an OS X executable."
+   exit 0
+fi
+
+otool -l "$1" | grep LC_RPATH -A 3 | grep path | cut -c15- | cut -d' ' -f1
