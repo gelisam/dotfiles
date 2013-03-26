@@ -1,0 +1,54 @@
+#!/usr/bin/ruby
+
+cells = {}
+strings = []
+
+buffer = ""
+while (c=$stdin.getc)
+  buffer << c
+  case buffer
+  when /<dimension ref="A1:([A-Z])([0-9]*)"\/>/
+    $largest_letter, $largest_number = $1.to_s, $2.to_i
+    (1..$largest_number).each {|number|
+      ("A"..$largest_letter).each {|letter|
+        cell = "#{letter}#{number}"
+        cells[cell] = "?"
+      }
+    }
+    
+    buffer = ""
+  when /<si><t>([^<]*)<\/t><\/si>/
+    string = $1.to_s
+    strings << string
+    
+    buffer = ""
+  when /<si>(.*)<\/si>/
+    string = $1.to_s
+    string.gsub!(/<[^>]*>/, "")
+    strings << string
+    
+    buffer = ""
+  when /<c r="([A-Z]*[0-9]*)" s="([0-9]*)"\/>/
+    cell, s = $1.to_s, $2.to_i
+    cells[cell] = ""
+    
+    buffer = ""
+  when /<c r="([A-Z]*[0-9]*)" s="([0-9]*)" t="s"><v>([^<]*)<\/v><\/c>/
+    cell, s, v = $1.to_s, $2.to_i, $3.to_i
+    cells[cell] = strings[v]
+    
+    buffer = ""
+  end
+end
+
+(1..$largest_number).each {|number|
+  ("A"..$largest_letter).each {|letter|
+    cell = "#{letter}#{number}"
+    print cells[cell]
+    if letter != $largest_letter
+      print "\t"
+    end
+  }
+  puts
+}
+

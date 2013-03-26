@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+DIR="$(dirname "$(readlink -f "$0" || echo "$0")")"
+TMP="$DIR/tmp"
+[ "$DIR" ]
+
+
+XLS_FILE="$1"
+
+
+rm -rf "$TMP"
+mkdir "$TMP"
+unzip "$XLS_FILE" -d "$TMP"
+
+cat "$TMP/xl/sharedStrings.xml" "$TMP/xl/worksheets/sheet1.xml" | "$DIR/xml2txt"
