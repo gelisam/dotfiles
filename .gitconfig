@@ -13,3 +13,5 @@
 	default = simple
 [core]
 	autocrlf = input
+[merge]
+	conflictstyle = diff3
