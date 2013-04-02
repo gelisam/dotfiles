@@ -11,6 +11,6 @@ XLS_FILE="$1"
 
 rm -rf "$TMP"
 mkdir "$TMP"
-unzip "$XLS_FILE" -d "$TMP"
+unzip "$XLS_FILE" -d "$TMP" 1>&2
 
 cat "$TMP/xl/sharedStrings.xml" "$TMP/xl/worksheets/sheet1.xml" | "$DIR/xml2txt"
