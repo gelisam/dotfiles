@@ -15,6 +15,7 @@ function verbose_rm {
     chmod -R u+w "$1"
   fi
   rm -rf "$1"
+  rmdir --ignore-fail-on-non-empty "$(dirname "$1")"
 }
 
 function trash_contents {
