@@ -53,5 +53,5 @@ while [ $# -gt 0 ]; do
   FILE="$1"; shift
   COUNT="$(ls "$DEST" | wc -l)"
   mkdir "$DEST/$COUNT"
-  mv "$FILE" "$DEST/$COUNT/$(basename "$1")"
+  mv "$FILE" "$DEST/$COUNT/$(basename "$FILE")"
 done
