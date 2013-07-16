@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+if [ ! "$1" ] || [ ! -f "$1" ]; then
+  echo "usage:"
+  echo "  $0 file1 [file2...]"
+  echo
+  echo "Stash the given files using git-stash."
+  echo "(because the original git-stash doesn't accept file arguments)"
+  # exit 1 if the arg was bad
+  [ ! "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
+  exit 0
+fi
+
+if [ "$2" ]; then
+  PREFIX="files"
+else
+  PREFIX="file"
+fi
+MSG="$PREFIX $(echo "$@" | sed 's|\<.*/||g')"
+
+git add "$@"
+git commit "$@" -m "files to be stashed" &> /dev/null
+git stash save "files to be kept" &> /dev/null
+git reset HEAD^ &> /dev/null
+git add "$@"
+git stash save "$MSG"
+
+if [ "$(git stash list | head -n 2 | tail -n 1 | grep "files to be kept")" ]; then
+  git stash pop stash@{1} &> /dev/null
+fi
