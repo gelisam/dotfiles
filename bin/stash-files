@@ -17,7 +17,7 @@ if [ "$2" ]; then
 else
   PREFIX="file"
 fi
-MSG="$PREFIX $(echo "$@" | sed 's|\<.*/||g')"
+MSG="$PREFIX $(echo "$@" | sed 's|[^ ]*/||g')"
 
 git add "$@"
 git commit "$@" -m "files to be stashed" &> /dev/null
