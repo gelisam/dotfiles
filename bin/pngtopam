@@ -1,0 +1,5 @@
+#!/bin/bash
+# because pngtopnm doesn't output with RGB_ALPHA files.
+INPUT="$(cat "$@" | base64)"
+pamstack -tupletype=RGB_ALPHA <(echo "$INPUT" | base64 -d | pngtopnm) \
+                              <(echo "$INPUT" | base64 -d | pngtopnm -alpha)
