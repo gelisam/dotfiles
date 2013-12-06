@@ -31,7 +31,7 @@ class BashDD(DD):
 
 if __name__ == '__main__':
   cmd = argv[1:]
-  if cmd: 
+  if cmd and cmd != ["-h"] and cmd != ["--help"]:
     lines = []
     lineno = 0
     all_lines = []
