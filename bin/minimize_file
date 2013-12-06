@@ -1,0 +1,52 @@
+#!/bin/bash
+if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "usage:"
+  echo "  $0 [--monotone] FILE CMD ARGS..."
+  echo ""
+  echo "Strip lines from FILE as long as CMD keeps returning SUCCESS."
+  echo "The original file is placed in \"FILE.orig\", just in case."
+  echo ""
+  echo ""
+  echo "options:"
+  echo "  --monotone  Assume that extra lines can't hurt."
+  echo "              Not true if the input needs to balance braces, for example."
+  echo ""
+  echo "examples:"
+  echo "  Find the smallest program acceptable by gcc."
+  echo "    $ cat hello.c"
+  echo "    #include <stdio.h>"
+  echo "    "
+  echo "    int main() {"
+  echo "      printf("hello world\n");"
+  echo "      return 0;"
+  echo "    }"
+  echo "    $ $0 hello.c gcc hello.c"
+  echo "    [...]"
+  echo "    dd: done"
+  echo "    Removing any line from the following will make the command fail."
+  echo "    ==="
+  echo "    int main() {"
+  echo "    }"
+  exit 0
+fi
+
+if [ "$1" = "--stdin" ]; then
+  # secret option, used when deltad calls $0
+  shift
+  FILE="$1"; shift
+  cat > "$FILE"
+  "$@"
+elif [ "$1" = "--monotone" ]; then
+  shift
+  FILE="$1"; shift
+  ORIG="${FILE}.orig"
+  cat "$FILE" > "$ORIG"
+  
+  deltad --monotone "$0" --stdin "$FILE" "$@" < "$ORIG"
+else
+  FILE="$1"; shift
+  ORIG="${FILE}.orig"
+  cat "$FILE" > "$ORIG"
+  
+  deltad "$0" --stdin "$FILE" "$@" < "$ORIG"
+fi
