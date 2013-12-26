@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "usage:"
   echo "  $0 [--monotone] FILE CMD ARGS..."
@@ -30,6 +32,24 @@ if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
+write_to() {
+  local FILE
+  local ORIG
+  local TMP
+  local N
+  FILE="$1"
+  ORIG="${FILE}.orig"
+  
+  TMP="${FILE}.tmp"
+  trap "rm '$TMP'" EXIT
+  tee "$TMP"
+  
+  N="$(cat "$ORIG" | wc -l | tr -d ' \t')"
+  cat "$TMP" | \
+    grep -A"$N" "^Removing any line from the following will make the command fail.$" | \
+    tail -n +3 > "$FILE"
+}
+
 if [ "$1" = "--stdin" ]; then
   # secret option, used when deltad calls $0
   shift
@@ -42,11 +62,12 @@ elif [ "$1" = "--monotone" ]; then
   ORIG="${FILE}.orig"
   cat "$FILE" > "$ORIG"
   
-  deltad --monotone "$0" --stdin "$FILE" "$@" < "$ORIG"
+  deltad --monotone "$0" --stdin "$FILE" "$@" < "$ORIG" | write_to "$FILE"
 else
   FILE="$1"; shift
   ORIG="${FILE}.orig"
+  TMP="${FILE}.tmp"
   cat "$FILE" > "$ORIG"
   
-  deltad "$0" --stdin "$FILE" "$@" < "$ORIG"
+  deltad "$0" --stdin "$FILE" "$@" < "$ORIG" | write_to "$FILE"
 fi
