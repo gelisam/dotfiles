@@ -44,8 +44,6 @@ export LESSCHARSET="utf-8"
 #  fi
 #fi
 
-export PATH="$HOME/Programs/CoreUtils/8.5/bin:$PATH0"
-. "$HOME/Programs/Rootless/Current/bin/StartRootless"
 export PATH="$PATH0"
 
 export LD_LIBRARY_PATH="$HOME/System/Links/Libraries:$CUSTOM/lib:/usr/local/lib:/usr/lib"
