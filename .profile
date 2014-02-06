@@ -1,6 +1,6 @@
 export PS1='\[\033[01;36m\]\h \[\033[01;34m\]\W \[\033[00m\]\$ '
 CUSTOM="$HOME/custom"
-PATH0="$HOME/bin:$HOME/quickfolders:/usr/local/git/bin:$HOME/.gem/ruby/1.8/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin:/usr/local/texlive/2009basic/bin/universal-darwin"
+PATH0="$HOME/bin:$HOME/quickfolders:/usr/local/git/bin:$HOME/.gem/ruby/1.8/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin"
 PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
 export RUBYLIB=$HOME/lib/ruby
 export EDITOR=vim
