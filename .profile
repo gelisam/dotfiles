@@ -26,11 +26,4 @@ alias telnet='telnet -e :'
 alias less='less -R'
 export LESSCHARSET="utf-8"
 
-#if [ "$SSH_CLIENT" == "" ]; then
-#  if [ "$(find ~/.trash | tail -n +2)" ]; then
-#    find ~/.trash | tail -n +2 | xargs echo rm -rf
-#    find ~/.trash | tail -n +2 | xargs rm -rf
-#  fi
-#fi
-
 export PATH="$PATH0"
