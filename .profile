@@ -1,10 +1,7 @@
 export PS1='\[\033[01;36m\]\h \[\033[01;34m\]\W \[\033[00m\]\$ '
-export GOBOLINKS="$HOME/System/Links"
 CUSTOM="$HOME/custom"
-PATH0="$HOME/bin:$HOME/quickfolders:/usr/local/git/bin:$HOME/.gem/ruby/1.8/bin:$HOME/.cabal/bin:$GOBOLINKS/Executables:$CUSTOM/bin:$CUSTOM/usr/local/bin:/usr/local/texlive/2009basic/bin/universal-darwin"
+PATH0="$HOME/bin:$HOME/quickfolders:/usr/local/git/bin:$HOME/.gem/ruby/1.8/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin:/usr/local/texlive/2009basic/bin/universal-darwin"
 PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
-export CPATH="$GOBOLINKS/Headers:$GOBOLINKS/Headers/SDL"
-export LIBRARY_PATH="$GOBOLINKS/Libraries"
 export RUBYLIB=$HOME/lib/ruby
 export EDITOR=vim
 export PYTHONPATH="$PYTHONPATH:$HOME/working/django"
@@ -41,6 +38,3 @@ export LESSCHARSET="utf-8"
 #fi
 
 export PATH="$PATH0"
-
-export LD_LIBRARY_PATH="$HOME/System/Links/Libraries:$CUSTOM/lib:/usr/local/lib:/usr/lib"
-export DYLD_FALLBACK_LIBRARY_PATH="$LD_LIBRARY_PATH"
