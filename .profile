@@ -4,7 +4,6 @@ PATH0="$HOME/bin:$HOME/quickfolders:/usr/local/git/bin:$HOME/.gem/ruby/1.8/bin:$
 PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
 export RUBYLIB=$HOME/lib/ruby
 export EDITOR=vim
-export PYTHONPATH="$PYTHONPATH:$HOME/working/django"
 
 export LANG="en_US.utf8"
 export LC_CTYPE="en_US.utf8"
