@@ -5,7 +5,6 @@ PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
 export RUBYLIB=$HOME/lib/ruby
 export EDITOR=vim
 export PYTHONPATH="$PYTHONPATH:$HOME/working/django"
-#export HAXE_LIBRARY_PATH="`brew --prefix`/share/haxe/std"
 
 export LANG="en_US.utf8"
 export LC_CTYPE="en_US.utf8"
