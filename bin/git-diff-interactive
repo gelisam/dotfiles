@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+if [ -z "$1" ] || [ "$2" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "usage:"
+  echo "  $0 HEAD^^^"
+  echo
+  echo "Interactively incorporate some the given commit into the current"
+  echo "work tree. The differences between the current work tree and the"
+  echo "given commit are shown, and you interactively pick which ones"
+  echo "want to apply."
+  exit 1
+fi
+
+# the commit with which to diff.
+COMMIT="$(git rev-parse "$1")"
+
+git commit -am "state before git-diff-interactive"
+
+# upon success or failure, reset HEAD to the state before
+# git-diff-interactive, keeping the other changes in the work tree.
+trap "git reset --hard; git reset HEAD^ > /dev/null" EXIT
+
+git checkout "$COMMIT" -- .
+git reset
+git commit -p --amend -m "state after git-diff-interactive"
