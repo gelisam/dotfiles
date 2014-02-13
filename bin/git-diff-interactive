@@ -15,12 +15,12 @@ fi
 # the commit with which to diff.
 COMMIT="$(git rev-parse "$1")"
 
-git commit -am "state before git-diff-interactive"
+git commit --allow-empty -am "state before git-diff-interactive"
 
 # upon success or failure, reset HEAD to the state before
 # git-diff-interactive, keeping the other changes in the work tree.
 trap "git reset --hard; git reset HEAD^ > /dev/null" EXIT
 
 git checkout "$COMMIT" -- .
-git reset
+git reset > /dev/null
 git commit -p --amend -m "state after git-diff-interactive"
