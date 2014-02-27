@@ -8,13 +8,13 @@
 #
 # The vertical format and lack of syntax highlighting in the plain conflict
 # marker layout makes it difficult to spot subtle conflicts such as
-# single-character changes and this is where a two-way diff really shines!
+# single-character changes and this is where a vimdiff really shines!
 # To see this explained using screenshots, see:
 # http://vim.wikia.com/wiki/A_better_Vimdiff_Git_mergetool
 #
 # This script, when used as a Git mergetool, opens each "side" of the conflict
-# markers in a two-way vimdiff window. This combines all the awesome of Git's
-# automatic merging savvy with the awesome and simplicity of a simple two-way
+# markers in a three-way vimdiff window. This combines all the awesome of Git's
+# automatic merging savvy with the awesome and simplicity of a simple three-way
 # diff.
 #
 # Add this mergetool to your ~/.gitconfig (you can substitute gvim for vim):
@@ -34,7 +34,7 @@
 # view the conflicts. You can resolve the conflicts in the first tab and save
 # and exit the file. This will also mark the conflict as resolved in Git.
 #
-#   Tab1 is a two-way diff of just the conflicts. Resolve the conflicts in
+#   Tab1 is a three-way diff of just the conflicts. Resolve the conflicts in
 #   MERGE and save the file.
 #       +--------------------------------+
 #       |  LOCAL   |   MERGE  |  REMOTE  |
