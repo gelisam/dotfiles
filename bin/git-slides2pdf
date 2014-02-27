@@ -1,0 +1,37 @@
+#!/bin/bash
+REV0="$1"
+REVN="$2"
+FILE="$3"
+
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "usage:"
+  echo "  $0 COMMIT-0 COMMIT-N file.txt > slides.pdf"
+  echo
+  echo "Produce a pdf containing one page per slide."
+  exit
+fi
+
+LINES_PER_PAGE="33"
+
+(
+  for R in `git rev-list "$REV0"^.."$REVN" | tac`; do
+    CONTENTS="$(git show "$R:$FILE")"
+    LENGTH="$(echo "$CONTENTS" | wc -l | tr -d ' 	')"
+    while [ "$LENGTH" -gt "$LINES_PER_PAGE" ]; do
+      echo "$CONTENTS" | head -n "$LINES_PER_PAGE"
+      CONTENTS="$(echo "$CONTENTS" | tail -n +$(($LINES_PER_PAGE + 1)))"
+      LENGTH=$(($LINES_PER_PAGE - $LINES_PER_PAGE))
+    done
+    
+    # by now, 0 <= $LENGTH < $LINES_PER_PAGE
+    if [ "$LENGTH" -gt "0" ]; then
+      echo "$CONTENTS"
+      
+      # fill up to $LINES_PER_PAGE lines
+      for x in `seq $(($LINES_PER_PAGE - $LENGTH))`; do
+        echo
+      done
+    fi
+  done
+) | enscript --output=- --landscape --lineprinter --font=Courier15 --truncate-lines | \
+  ps2pdf -
