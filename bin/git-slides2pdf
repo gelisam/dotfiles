@@ -33,5 +33,6 @@ LINES_PER_PAGE="33"
       done
     fi
   done
-) | enscript --output=- --landscape --lineprinter --font=Courier15 --truncate-lines | \
+) | iconv -f UTF-8 -t latin1 | \
+  enscript --encoding=latin1 --output=- --landscape --lineprinter --font=Courier15 --truncate-lines | \
   ps2pdf -
