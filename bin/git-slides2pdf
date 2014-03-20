@@ -20,7 +20,7 @@ LINES_PER_PAGE="33"
     while [ "$LENGTH" -gt "$LINES_PER_PAGE" ]; do
       echo "$CONTENTS" | head -n "$LINES_PER_PAGE"
       CONTENTS="$(echo "$CONTENTS" | tail -n +$(($LINES_PER_PAGE + 1)))"
-      LENGTH=$(($LINES_PER_PAGE - $LINES_PER_PAGE))
+      LENGTH=$(($LENGTH - $LINES_PER_PAGE))
     done
     
     # by now, 0 <= $LENGTH < $LINES_PER_PAGE
