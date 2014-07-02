@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import subprocess
 from sys import stdin
 from sys import argv
