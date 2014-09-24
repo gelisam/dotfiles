@@ -19,6 +19,27 @@ function verbose_rm {
   rmdir --ignore-fail-on-non-empty "$(dirname "$1")"
 }
 
+function dir_contents {
+  local DIR="$1"
+  local CUT_SIZE="$(echo "$DIR/" | wc -c | tr -d ' 	')"
+  ls -d "$DIR"/* | cut -c"$CUT_SIZE"- | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
+}
+
+function dir_maxid {
+  local DIR="$1"
+  dir_contents "$DIR" | tail -n 1
+}
+
+function dir_freshid {
+  local DIR="$1"
+  if [ -d "$DIR" ]; then
+    local MAXID="$(dir_maxid "$DIR")"
+    echo $(($MAXID + 1))
+  else
+    echo 0
+  fi
+}
+
 function trash_contents {
   local CUT_SIZE="$(echo "$TRASH/" | wc -c | tr -d ' 	')"
   ls -d "$TRASH/"*/* | cut -c"$CUT_SIZE"- | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
@@ -52,7 +73,7 @@ DEST="$(hoursago_dir 0)"
 mkdir -p "$DEST"
 while [ $# -gt 0 ]; do
   FILE="$1"; shift
-  COUNT="$(ls "$DEST" | wc -l)"
-  mkdir "$DEST/$COUNT"
-  mv "$FILE" "$DEST/$COUNT/$(basename "$FILE")"
+  ID="$(dir_freshid "$DEST")"
+  mkdir "$DEST/$ID"
+  mv "$FILE" "$DEST/$ID/$(basename "$FILE")"
 done
