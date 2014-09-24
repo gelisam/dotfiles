@@ -1,7 +1,8 @@
 #!/bin/bash
 
 TRASH="$HOME/.Trash"
-TRASH_MAX="100"
+TRASH_MAX="50"
+TRASH_MIN="40"
 
 function hoursago_dir {
   local DATETIME="$1 hours ago"
@@ -30,7 +31,7 @@ function trash_count {
 TRASH_COUNT="$(trash_count)"
 if [ "$TRASH_COUNT" -gt "$TRASH_MAX" ]; then
   echo "There are currently $TRASH_COUNT files in the trash."
-  RM_COUNT=$(($TRASH_COUNT - $TRASH_MAX))
+  RM_COUNT=$(($TRASH_COUNT - $TRASH_MIN))
   if [ "$RM_COUNT" -gt 1 ]; then
     echo "Maximum of $TRASH_MAX exceeded: deleting the $RM_COUNT oldest files."
   else
@@ -40,7 +41,7 @@ if [ "$TRASH_COUNT" -gt "$TRASH_MAX" ]; then
     verbose_rm "$TRASH/$x"
   done
   
-  if [ "$(trash_count)" -gt "$TRASH_MAX" ]; then
+  if [ "$(trash_count)" -gt "$TRASH_MIN" ]; then
     echo "you might want to empty the $TRASH yourself;"
     echo "there are files I don't know about in there."
   fi
