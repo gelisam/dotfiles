@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 TRASH="$HOME/.Trash"
 TRASH_MAX="50"
