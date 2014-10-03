@@ -42,8 +42,10 @@ function dir_freshid {
 }
 
 function trash_contents {
-  local CUT_SIZE="$(echo "$TRASH/" | wc -c | tr -d ' 	')"
-  ls -d "$TRASH/"*/* | cut -c"$CUT_SIZE"- | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
+  if [ -d "$TRASH" ]; then
+    local CUT_SIZE="$(echo "$TRASH/" | wc -c | tr -d ' 	')"
+    ls -d "$TRASH/"*/* | cut -c"$CUT_SIZE"- | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
+  fi
 }
 
 function trash_count {
