@@ -23,7 +23,7 @@ function verbose_rm {
 function dir_contents {
   local DIR="$1"
   local CUT_SIZE="$(echo "$DIR/" | wc -c | tr -d ' 	')"
-  ls "$DIR" | cut -c"$CUT_SIZE"- | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
+  ls "$DIR" | sort -t/ -k1.1,1.4 -k1.6,1.7 -k1.9,1.10 -k1.12 -k2,2 -n
 }
 
 function dir_maxid {
