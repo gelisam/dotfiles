@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-DIR="$(dirname "$(readlink -f "$0")")"
+function abs {
+  echo "$1" | sed 's!^\.!'"$(pwd)"'!g'
+}
+
+DIR="$(dirname "$(abs "$0")")"
 
 
 function symlink {
