@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+function pressEnter {
+  local X
+  echo "(Enter to continue, Ctrl-C to abort)"
+  read X
+}
+
+REMOTE="$(git remote | grep upstream || echo origin)"
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+[ "$BRANCH" = "master" ]
+
+echo
+echo "Making sure we have the latest changes from github..."
+git pull --ff-only "$REMOTE" "$BRANCH"
+
+echo
+echo "Did you update the changelog?"
+pressEnter
+
+echo "Obtaining the current version number..."
+PACKAGE_VERSION="$(cabal info . | grep '^\* [a-z-]\+-[0-9.]\+ (library)$' | cut -d' ' -f2)"
+PACKAGE="$(echo "$PACKAGE_VERSION" | sed 's/-[0-9][0-9.]*//g')"
+VERSION="$(echo "$PACKAGE_VERSION" | sed 's/.*-//g')"
+[ "$PACKAGE" ]
+[ "$VERSION" ]
+
+echo
+echo "Did you bump $PACKAGE's version number ($VERSION)?"
+pressEnter
+
+echo
+echo "Checking for issues..."
+cabal check
+
+echo
+echo "Creating the tar file..."
+cabal v2-sdist
+TAR_FILE="dist-newstyle/sdist/$PACKAGE-$VERSION.tar.gz"
+[ -f "$TAR_FILE" ]
+
+echo
+echo "Uploading the tar file..."
+cabal upload $1 "$TAR_FILE"
+
+echo
+echo "Generating documentation..."
+upload-hackage-docs $1
+
+if [ "$1" = "--publish" ]; then
+  echo
+  echo "$PACKAGE-$VERSION is now published at https://hackage.haskell.org/package/$PACKAGE-$VERSION"
+
+  echo "Tagging the git commit..."
+  TAG="v$VERSION"
+  git tag "$TAG"
+  git push --tags "$REMOTE"
+else
+  echo
+  echo "$PACKAGE-$VERSION is now published at https://hackage.haskell.org/package/$PACKAGE-$VERSION/candidate"
+  echo "Please verify that it works and then call this script again with the --publish flag"
+fi
