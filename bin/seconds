@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+TIME="$((time "$@" > /dev/null) 2>&1 | grep ^real | cut -f2)"
+MINUTES_="$(echo "$TIME" | cut -d'm' -f1)"
+SECONDS_="$(echo "$TIME" | cut -d'm' -f2 | cut -d'.' -f1)"
+MILLIS_="$(echo "$TIME" | cut -d'.' -f2 | cut -d's' -f1)"
+
+echo $((60 * $MINUTES_ + SECONDS_)).$MILLIS_
