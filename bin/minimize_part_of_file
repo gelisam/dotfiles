@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "usage:"
+  echo "  $0 [--monotone] FILE CMD ARGS..."
+  echo ""
+  echo "Same as minimize_file, except you need to split FILE into \"FILE.prefix\","
+  echo "\"file.middle\", and \"FILE.suffix\". Then only \"FILE.middle\" is minimized."
+  echo "The original file is placed in \"FILE.orig\", just in case."
+  exit 0
+fi
+
+if [ "$1" = "--rebuild-file" ]; then
+  # secret option, used when minimize_file calls $0
+  shift
+  FILE="$1"; shift
+  echo "cat ${FILE}.prefix ${FILE}.middle ${FILE}.suffix > $FILE"
+  cat "${FILE}.prefix" "${FILE}.middle" "${FILE}.suffix" > "$FILE"
+  "$@"
+elif [ "$1" = "--monotone" ]; then
+  shift
+  FILE="$1"; shift
+  ORIG="${FILE}.orig"
+  cat "$FILE" > "$ORIG"
+  
+  echo minimize_file --monotone "${FILE}.middle" "$0" --rebuild-file "$FILE" "$@"
+  minimize_file --monotone "${FILE}.middle" "$0" --rebuild-file "$FILE" "$@"
+else
+  FILE="$1"; shift
+  ORIG="${FILE}.orig"
+  cat "$FILE" > "$ORIG"
+  
+  echo minimize_file "${FILE}.middle" "$0" --rebuild-file "$FILE" "$@"
+  minimize_file "${FILE}.middle" "$0" --rebuild-file "$FILE" "$@"
+fi
