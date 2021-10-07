@@ -1,0 +1,128 @@
+(defcfg
+  input  (device-file "/dev/input/by-id/usb-Microsoft_Microsoft_Ergonomic_Keyboard_605543510921-event-kbd")
+  output (uinput-sink "My KMonad output"
+    ;; To understand the importance of the following line, see the section on
+    ;; Compose-key sequences at the near-bottom of this file.
+    "/usr/bin/sleep 1 && /usr/bin/setxkbmap -option compose:ralt")
+  cmp-seq ralt    ;; Set the compose key to `RightAlt'
+  cmp-seq-delay 5 ;; 5ms delay between each compose-key sequence press
+  fallthrough true
+  allow-cmd true
+)
+
+(defsrc
+  ;; what is printed on the key
+  ;; what keycode is emitted by the keyboard
+  ;; the single keycode to be replaced in a deflayer, or "reserved" if the keyboard emits a combination
+  ;;   or if the keycode is a duplicate of another key
+
+  ;; 1 2 3   mute volume-up volume-down [play] prev play/pause next   calc []+ [[]] lock   search
+  ;; met+1 met+2 met+3   mute vold volu config prev pp next   calc sft+met+s met+tab met+l  met+rsft+f21
+  reserved reserved reserved   mute vold volu config prev pp next   calc reserved reserved reserved   reserved
+
+  ;; Esc F1 F2 F3 F4 F5 F6   F7 F8 F9 F10 F11 F12 PrtScn Delete   ScrLk Pause NumLk  Clear ( ) <x|
+  ;; esc f1 f2 f3 f4 f5 f6   f7 f8 f9 f10 f11 f12 sys del   slck pause nlck  esc sft+9 stf+0 bks
+  esc f1 f2 f3 f4 f5 f6   f7 f8 f9 f10 f11 f12 sys del   slck pause nlck  esc reserved reserved reserved
+
+  ;; ~/` !/1 @/2 #/3 $/4 %/5 ^/6   &/7 */8 (/9 )/0 _/- +/= Backspace   Insert Home PgUp   = / * -
+  ;; ` 1 2 3 4 5 6   7 8 9 0 - = bks   ins home pgup   = kp/  kp*  kp-
+  ` 1 2 3 4 5 6   7 8 9 0 - = bks   ins home pgup   reserved kp/  kp*  kp-
+
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \         del  end  pgdn   kp7  kp8  kp9  kp+
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret                             kp4  kp5  kp6
+  sft  z    x    c    v    b    n    m    ,    .    /    rsft                     up          kp1  kp2  kp3  kprt
+  
+  ;; Ctrl [=] windows-logo Alt   Space   Alt office-logo :) Ctrl   left down right   0/Insert ./Del
+  ;; ctl cmp met alt   spc   ralt ctl+stf+alt+meta ctl+stf+alt+meta+spc  rctl     left down rght   kp0  kp.
+  ctl cmp met alt   spc   ralt reserved reserved rctl   left down rght   kp0  kp.
+)
+
+;; a 4-letter (when the '@' prefix is added) alias for keys which don't
+;; already have one or whose name I don't like
+(defalias
+  bt1 M-1
+  bt2 M-2
+  bt3 M-3
+  cfg config
+  new S-M-s      ;; "[]+" looks like creating a new rectangle to me
+  tog M-tab      ;; "[[]]" looks like toggling between windows to me
+  lck M-l        ;; lock icon
+  srh M-RS-f21   ;; search icon
+  prt sys        ;; print-screen
+  pau pause
+  pop cmp        ;; popup menu
+  win met        ;; windows logo
+  off C-S-A-M    ;; office logo
+  sml C-S-M-spc  ;; smiley face
+)
+
+;; ;; cheatsheet
+;;
+;; C-A-del = (around ctl (around alt del))
+;; (tap-next-release when-tapping when-holding)
+;; (layer-toggle layer-name)
+;; (layer-switch layer-name)
+;; (layer-add layer-name)
+;; (layer-rem layer-name)
+;; (layer-next layer-name) = (around-next (layer-toggle layer-name))
+;; (cmd-button "echo pressed" "echo released")
+;;
+;; ;; all durations are in milliseconds
+;; (layer-delay 500 layer-name)
+;; (sticky-key 300 sft)
+;; #(K M o n a d :delay 5) = (tap-macro K P5 M P5 o P5 n P5 a P5 d)
+;; P20 = (pause 20)
+;; (tap-hold-next-release 200 when-tapping when-holding-for-more-than-200ms-or-combining)
+;; (multi-tap 300 when-tapping when-tapped-twice-within-300-ms)
+;; (around-next-timeout 300 around-button when-no-other-button-is-pressed-within-300ms)
+
+;; aliases which do something new
+(defalias
+  ss  ;; space types a space, space-key = S-key, TODO: hold space = repeat spaces
+    (tap-hold-next-release 500 spc sft)
+  mnu f10  ;; use the "menu" button to open the top menu rather than the right-click menu
+  ral (layer-next ralt)
+)
+
+;; the layer we're actually using (because it's defined first)
+(deflayer base
+  _    _    _         _    _    _    _    _    _   _        _    _    _    _         _
+  _    _    _    _    _    _       _    _    _    _    _    _    _    _    _    _    _    _      _    _    _    _
+  _    _    _    _    _    _       _    _    _    _    _    _    _    _         _    _    _      _    _    _    _
+  _    _    _    _    _    _       _    _    _    _    _    _    _    _         _    _    _      _    _    _    _
+  ctl  _    _    _    _    _       _    _    _    _    _    _    _                               _    _    _
+  _    _    _    _    _    _       _    _    _    _    _    _                        _           _    _    _    _
+  _    @mnu _    _            @ss                 @ral _    _    _              _    _    _           _    _
+)
+
+;; a repeat of defsrc, but aligned nicely
+(deflayer untouched
+  @bt1 @bt2 @bt3      mute vold volu @cfg prev pp   next      calc @new @tog @lck      @srh
+  esc  f1   f2   f3   f4   f5   f6        f7   f8   f9   f10  f11  f12  @prt del  slck @pau nlck   esc  \(   \)   bks
+  `    1    2    3    4    5    6         7    8    9    0    -    =    bks       ins  home pgup   =    kp/  kp*  kp-
+  tab  q    w    e    r    t         y    u    i    o    p    [    ]    \         del  end  pgdn   kp7  kp8  kp9  kp+
+  caps a    s    d    f    g         h    j    k    l    ;    '    ret                             kp4  kp5  kp6
+  sft  z    x    c    v    b         n    m    ,    .    /    rsft                     up          kp1  kp2  kp3  kprt
+  ctl  @pop @win alt            spc            ralt @off @sml rctl                left down rght        kp0  kp.
+)
+
+;; starting template to create a new layer
+(deflayer blank
+  _    _    _         _    _    _    _    _    _    _         _    _    _    _         _
+  _    _    _    _    _    _    _         _    _    _    _    _    _    _    _    _    _    _      _    _    _    _
+  _    _    _    _    _    _    _         _    _    _    _    _    _    _         _    _    _      _    _    _    _
+  _    _    _    _    _    _         _    _    _    _    _    _    _    _         _    _    _      _    _    _    _
+  _    _    _    _    _    _         _    _    _    _    _    _    _                               _    _    _
+  _    _    _    _    _    _         _    _    _    _    _    _                        _           _    _    _    _
+  _    _    _    _              _              _    _    _    _                   _    _    _           _    _
+)
+
+(deflayer ralt
+  _    _    _         _    _    _    _    _    _    _         _    _    _    _         _
+  _    _    _    _    _    _    _         _    _    _    _    _    _    _    _    _    _    _      _    _    _    _
+  +`   _    +"   _    _    _    +^        _    _    _    _    _    _    _         _    _    _      _    _    _    _
+  _    _    _    _    _    _         _    _    _    _    _    +^   +"   +`        _    _    _      _    _    _    _
+  _    _    _    _    _    _         _    _    _    _    _    +"   _                               _    _    _
+  _    _    _    _    _    _         _    _    +,   +,   +'   _                        _           _    _    _    _
+  _    _    _    _              _              _    _    _    _                   _    _    _           _    _
+)

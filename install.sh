@@ -23,7 +23,7 @@ symlink .inputrc
 symlink .rxvtkeys
 symlink .vim
 symlink .vimrc
-symlink .xmodmap
+symlink .kmonad.kbd
 on_login .profile
 on_login .bashrc
 
