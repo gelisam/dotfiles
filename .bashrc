@@ -16,6 +16,7 @@ shopt -s checkwinsize
 umask 022
 
 export HISTIGNORE="&:exit:[ \t]*"
+alias g='grex .hs'
 alias ls='ls -G'
 alias mv='mv -i'
 alias cp='cp -ir'
