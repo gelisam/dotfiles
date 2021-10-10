@@ -79,7 +79,7 @@
 ;; aliases which do something new
 (defalias
   ss  ;; space types a space, space-key = S-key, TODO: hold space = repeat spaces
-    (tap-hold-next-release 500 spc sft)
+    (tap-hold-next-release 1000 spc sft :timeout-button spc)
   mnu f10  ;; use the "menu" button to open the top menu rather than the right-click menu
   ral (layer-next ralt)
 )
