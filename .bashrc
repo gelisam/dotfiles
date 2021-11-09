@@ -1,7 +1,18 @@
 export PS1='\[\033[01;36m\]\h \[\033[01;34m\]\W \[\033[00m\]\$ '
 CUSTOM="$HOME/custom"
-PATH0="$HOME/bin:$HOME/quickfolders:$HOME/.ghcup/bin:$HOME/.local/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin"
-PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
+PATH0="$HOME/bin:$HOME/quickfolders"
+if [ -d /run/wrappers/bin ]; then
+  PATH0="$PATH0"
+else
+  PATH0="$PATH0:$HOME/.ghcup/bin"
+fi
+PATH0=":$HOME/.local/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin"
+if [ -d /run/wrappers/bin ]; then
+  PATH0="$PATH0:/run/wrappers/bin:/home/gelisam/.nix-profile/bin:/etc/profiles/per-user/gelisam/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin"
+else
+  PATH0="$PATH0:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin:/usr/local/sbin"
+fi
+
 export EDITOR=vim
 
 export LANG="en_US.utf8"
