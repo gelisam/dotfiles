@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+xclip -out -selection primary | xclip -in -selection clipboard
