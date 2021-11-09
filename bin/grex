@@ -34,4 +34,4 @@ if [ "$1" = "-newer" ]; then
   FIND_OPTIONS[${#FIND_OPTIONS[@]}]="$1"; shift
 fi
 
-find "${DIR[@]}" -name '\.git' -prune -o -name '\.svn' -prune -o -type f "${FIND_OPTIONS[@]}" -print | tr '\n' '\0' | xargs -0 grep "$@"
+find "${DIR[@]}" -name '\.git' -prune -o -name '\.stack-work' -prune -o -type f "${FIND_OPTIONS[@]}" -print | tr '\n' '\0' | xargs -0 grep "$@"
