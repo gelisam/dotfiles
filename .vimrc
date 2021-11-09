@@ -140,3 +140,8 @@ source ~/.rxvtkeys
 "if has("python")
 ":source /home/2003/sgelin3/dev/vim/fields.vim
 "endif
+
+" two birds with one stone: replace annoyingly-destructive binding, and make
+" it easy to generate multiple spaces while still using space as shift when
+" held
+:imap <C-U> <space>
