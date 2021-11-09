@@ -1,12 +1,18 @@
 export PS1='\[\033[01;36m\]\h \[\033[01;34m\]\W \[\033[00m\]\$ '
 CUSTOM="$HOME/custom"
-PATH0="$HOME/bin:$HOME/quickfolders"
+PATH0="$HOME/bin-common"
 if [ -d /run/wrappers/bin ]; then
   PATH0="$PATH0"
+  ln -sf "$HOME/bin-nix" "$HOME/bin"
+  ln -sf "$HOME/.local/bin-nix" "$HOME/.local/bin"
+  ln -sf "$HOME/.cabal/bin-nix" "$HOME/.cabal/bin"
 else
   PATH0="$PATH0:$HOME/.ghcup/bin"
+  ln -sf "$HOME/bin-fedora" "$HOME/bin"
+  ln -sf "$HOME/.local/bin-fedora" "$HOME/.local/bin"
+  ln -sf "$HOME/.cabal/bin-fedora" "$HOME/.cabal/bin"
 fi
-PATH0=":$HOME/.local/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin"
+PATH0="$PATH0:$HOME/bin:$HOME/quickfolders:$HOME/.local/bin:$HOME/.cabal/bin:$CUSTOM/bin:$CUSTOM/usr/local/bin"
 if [ -d /run/wrappers/bin ]; then
   PATH0="$PATH0:/run/wrappers/bin:/home/gelisam/.nix-profile/bin:/etc/profiles/per-user/gelisam/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin"
 else

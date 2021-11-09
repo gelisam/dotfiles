@@ -17,7 +17,13 @@ function on_login {
 }
 
 
-symlink bin
+symlink bin-common
+symlink bin-fedora
+symlink bin-nix
+mkdir -p ~/.cabal/bin-fedora
+mkdir -p ~/.cabal/bin-nix
+mkdir -p ~/.local/bin-fedora
+mkdir -p ~/.local/bin-nix
 symlink .gitconfig
 symlink .inputrc
 symlink .rxvtkeys
