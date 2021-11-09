@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+cd ~/working/haskell/termonad
+stack exec -- termonad "$@"
