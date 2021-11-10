@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # because pnmtopng doesn't accept RGB_ALPHA files.
+set -e
+
 INPUT="$(cat "$@" | base64)"
 pnmtopng -force <(echo "$INPUT" | base64 -d | pamchannel 0 1 2) \
          -alpha=<(echo "$INPUT" | base64 -d | pamchannel 3)

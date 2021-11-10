@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # because pngtopnm doesn't output with RGB_ALPHA files.
+set -e
+
 INPUT="$(cat "$@" | base64)"
 pamstack -tupletype=RGB_ALPHA <(echo "$INPUT" | base64 -d | pngtopnm) \
                               <(echo "$INPUT" | base64 -d | pngtopnm -alpha)
