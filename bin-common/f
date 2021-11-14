@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# a wrapper around find which make the common case easy: search a given folder
+# (the current folder by default) for files (not folders) containing a given
+# substring.
 declare -a DIR
 declare -a FIND_OPTIONS
 while [ -d "$1" ]; do
