@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# a wrapper around grep which make it easy to only search within a folder with
+# "grex src" or only Haskell files with "grex .hs"
 declare -a DIR
 declare -a FIND_OPTIONS
 while [ -d "$1" ]; do
