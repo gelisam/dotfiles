@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 function pressEnter {
@@ -9,7 +9,7 @@ function pressEnter {
 
 REMOTE="$(git remote | grep upstream || echo origin)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-[ "$BRANCH" = "master" ]
+[ "$BRANCH" = "master" ] || [ "$BRANCH" = "main" ]
 
 echo
 echo "Making sure we have the latest changes from github..."
@@ -20,7 +20,7 @@ echo "Did you update the changelog?"
 pressEnter
 
 echo "Obtaining the current version number..."
-PACKAGE_VERSION="$(cabal info . | grep '^\* [a-z-]\+-[0-9.]\+ (library)$' | cut -d' ' -f2)"
+PACKAGE_VERSION="$(cabal info . | grep '^\* [a-z-]\+-[0-9.]\+ *(library)$' | cut -d' ' -f2)"
 PACKAGE="$(echo "$PACKAGE_VERSION" | sed 's/-[0-9][0-9.]*//g')"
 VERSION="$(echo "$PACKAGE_VERSION" | sed 's/.*-//g')"
 [ "$PACKAGE" ]
