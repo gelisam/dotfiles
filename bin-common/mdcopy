@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# a variant of 'pbcopy' which prefixes the selection with four spaces per line,
+# for the common case in which the plan is to paste the result as a code
+# snippet in a markdown file.
+set -e
+
+sed 's/^/    /g' | pbcopy
