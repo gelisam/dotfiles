@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+ARGS=()
+for ARG in "$@"; do
+  if [ "$(echo "$ARG" | cut -c1-4)" = "src/" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( */"$ARG" )
+  elif [ "$(echo "$ARG" | cut -c1-5)" = "test/" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( */"$ARG" )
+  elif [ "$(echo "$ARG" | cut -c1-2)" = "a/" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( "$(echo "$ARG" | cut -c3-)" )
+  elif [ "$(echo "$ARG" | cut -c1-2)" = "b/" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( "$(echo "$ARG" | cut -c3-)" )
+  elif [ "$(echo "$ARG" | grep ':[0-9]\+')" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( "$(echo "$ARG" | sed 's/^\(.*\):\([0-9]\+\).*$/\1/g')" )
+    ARGS+=( "$(echo "$ARG" | sed 's/^\(.*\):\([0-9]\+\).*$/+\2/g')" )
+  elif [ "$(echo "$ARG" | grep '#L[0-9]\+')" ] && [ ! -f "$ARG" ]; then
+    ARGS+=( "$(echo "$ARG" | sed 's/^\(.*\)#L\([0-9]\+\).*$/\1/g')" )
+    ARGS+=( "$(echo "$ARG" | sed 's/^\(.*\)#L\([0-9]\+\).*$/+\2/g')" )
+  else
+    ARGS+=( "$ARG" )
+  fi
+done
+
+vim "${ARGS[@]}"
